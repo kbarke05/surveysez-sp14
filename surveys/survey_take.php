@@ -19,8 +19,15 @@
  */
 require '../inc_0700/config_inc.php'; #provides configuration, pathing, error handling, db credentials 
 
+# check variable of item passed in - if invalid data, forcibly redirect back to demo_list.php page
+if(isset($_REQUEST['SurveyID']) && (int)$_REQUEST['SurveyID'] > 0){#proper data must be on querystring
+	 $myID = (int)$_REQUEST['SurveyID']; #Convert to integer, will equate to zero if fails
+}else{
+	myRedirect(VIRTUAL_PATH . "surveys/survey_list.php");
+}
+
 #currently 'hard wired' to one survey - will need to pass in #id of a Survey on the qstring 
-$mySurvey = new Survey(1);
+$mySurvey = new Survey($myID);
 if($mySurvey->isValid)
 {
 	$PageTitle = "Take the '" . $mySurvey->Title . "' Survey!";
@@ -41,13 +48,13 @@ current results. (SurveySez version 4)</p>
 # public static method for entering response data
 if(Survey::insertSurvey())
 {#Survey inserted! - show result
-	$myResult = new Result(1);  # We have hard wired our survey ID to the first survey
+	$myResult = new Result($myID);  # We have hard wired our survey ID to the first survey
 	$PageTitle = $myResult->Title . " survey result";  //re-title page
 	echo "Survey Title: <b>" . $myResult->Title . "</b><br />";  //show data on page
 	echo "Survey Description: " . $myResult->Description . "<br />";
 	echo "Number of Responses: " .$myResult->TotalResponses . "<br /><br />";
 	$myResult->showGraph(); # showGraph method shows all questions, answers visual results!
-	echo '<br /><a href="' . THIS_PAGE . '">Take Survey Again!</a>';
+	echo '<br /><a href="' . THIS_PAGE . '?SurveyID=' . $myID .'">Take Survey Again!</a>';
 	$config->benchNote = "Data Inserted";
 }else{# show form!
 	if($mySurvey->isValid)

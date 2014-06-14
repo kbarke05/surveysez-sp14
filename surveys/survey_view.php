@@ -70,8 +70,11 @@ if($myResult->isValid)
 	echo "Survey Title: <b>" . $myResult->Title . "</b><br />";  //show data on page
 	echo "Survey Description: " . $myResult->Description . "<br />";
 	$myResult->showGraph() . "<br />";	//showTallies method shows all questions, answers and tally totals!
+	echo '<br /><a href="survey_take.php?SurveyID=' . $myID .'">Take Survey!</a>';
+
 	responseList($myID);
 	unset($myResult);  //destroy object & release resources
+
 }else{
 	if($mySurvey->isValid)
 	{ #check to see if we have a valid SurveyID
@@ -81,11 +84,13 @@ if($myResult->isValid)
 	$mySurvey->showQuestions();
 	//responseList($myID);
 	echo 'No results so far!';
+	
 	}else{
 	echo "Sorry, no such survey!";	
 	}
 
 }
+
 
 get_footer(); #defaults to theme footer or footer_inc.php
 
